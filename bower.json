@@ -1,0 +1,25 @@
+{
+  "name": "angular-request-idle",
+  "main": "index.js",
+  "homepage": "https://github.com/idiotWu/angular-request-idle",
+  "authors": [
+    "Dolphin Wood <dolphin.w.e@gmail.com>"
+  ],
+  "description": "requestIdle for angular apps",
+  "moduleType": [],
+  "keywords": [
+    "angular",
+    "idle"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.7"
+  }
+}

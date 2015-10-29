@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>angular-request-idle</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+    <main ng-app="app">
+        <section ng-controller="trafficLightsCtrl">
+            <div class="light green" ng-class="{ cur: current === 'green'}"></div>
+            <div class="light yellow" ng-class="{ cur: current === 'yellow'}"></div>
+            <div class="light red" ng-class="{ cur: current === 'red'}"></div>
+        </section>
+    </main>
+
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../index.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>
