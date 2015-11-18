@@ -50,7 +50,7 @@ angular.module('ng.requestIdle', [])
         };
 
         TimeManager.prototype.free = function() {
-            this.idle.end();
+            this.idle && this.idle.end();
         };
 
         TimeManager.prototype.errorHandler = function(err) {
@@ -63,7 +63,7 @@ angular.module('ng.requestIdle', [])
     .factory('requestIdle', ['$q', 'TimeManager', function($q, TimeManager) {
         var lastTask = typeof $q.resolve === 'function' ? $q.resolve() : $q.when();
 
-        return function requestIdle() {
+        function requestIdle() {
             var duration, task;
 
             if (typeof arguments[0] === 'function') {
@@ -74,8 +74,12 @@ angular.module('ng.requestIdle', [])
             }
 
             var tm = new TimeManager();
+            var currentTask = lastTask;
+            var isReleased = false;
 
-            lastTask = lastTask.then(function() {
+            lastTask = currentTask.then(function() {
+                    if (isReleased) return;
+
                     var idle = tm.talloc(duration);
 
                     if (typeof task === 'function') task(idle);
@@ -83,5 +87,19 @@ angular.module('ng.requestIdle', [])
                     return idle.promise;
                 })
                 .catch(tm.errorHandler.bind(tm));
+
+            lastTask.free = function() {
+                if (currentTask.free) currentTask.free();
+
+                tm.free();
+
+                isReleased = true;
+            };
         };
+
+        requestIdle.release = function() {
+            lastTask.free();
+        };
+
+        return requestIdle;
     }]);
