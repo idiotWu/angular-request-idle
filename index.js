@@ -61,7 +61,7 @@ angular.module('ng.requestIdle', [])
         return TimeManager;
     }])
     .factory('requestIdle', ['$q', 'TimeManager', function($q, TimeManager) {
-        var lastTask = typeof $q.resolve === 'function' ? $q.resolve() : $q.when();
+        var currentTask = typeof $q.resolve === 'function' ? $q.resolve() : $q.when();
 
         function requestIdle() {
             var duration, task;
@@ -74,31 +74,38 @@ angular.module('ng.requestIdle', [])
             }
 
             var tm = new TimeManager();
-            var currentTask = lastTask;
+            var lastTask = currentTask;
             var isReleased = false;
+            var discardTask = false;
 
-            lastTask = currentTask.then(function() {
-                    if (isReleased) return;
+            currentTask = lastTask.then(function() {
+                    task = typeof task === 'function' && task;
 
                     var idle = tm.talloc(duration);
 
-                    if (typeof task === 'function') task(idle);
+                    if (isReleased) {
+                        if (!discardTask && task) task(idle);
+                        return;
+                    }
+
+                    if (task) task(idle);
 
                     return idle.promise;
                 })
                 .catch(tm.errorHandler.bind(tm));
 
-            lastTask.free = function() {
-                if (currentTask.free) currentTask.free();
+            currentTask.end = function(discard) {
+                isReleased = true;
+                discardTask = discard;
+
+                if (lastTask.end) lastTask.end(discard);
 
                 tm.free();
-
-                isReleased = true;
             };
         };
 
-        requestIdle.release = function() {
-            lastTask.free();
+        requestIdle.release = function(discard) {
+            currentTask.end(discard);
         };
 
         return requestIdle;
