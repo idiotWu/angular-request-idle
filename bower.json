@@ -1,7 +1,7 @@
 {
   "name": "angular-request-idle",
   "main": "index.js",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "homepage": "https://github.com/idiotWu/angular-request-idle",
   "authors": [
     "Dolphin Wood <dolphin.w.e@gmail.com>"
